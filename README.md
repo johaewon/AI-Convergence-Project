@@ -1,46 +1,45 @@
 # AI-Convergence-Project
 고급AI융합프로젝트(캡스톤디자인)
+# 이상행동 탐지 모델 개발 (Development of Abnormal Behavior Detection Model)
 
-# Development of Abnormal Behavior Detection Model
+## 📖 프로젝트 개요
+[cite_start]이 프로젝트는 무인 점포의 CCTV 영상을 활용하여 절도와 같은 이상행동을 실시간으로 탐지하는 딥러닝 모델을 개발하는 것을 목표로 합니다[cite: 1, 5]. [cite_start]기존의 사후 처리 방식이 가진 한계를 극복하여, 보안성을 강화하고 운영 효율성을 높입니다[cite: 4, 6].
 
-## 📖 Project Overview
-[cite_start]This project aims to develop a deep learning model that detects abnormal behaviors (e.g., theft) in real-time within unmanned stores using CCTV footage[cite: 1, 5]. [cite_start]By overcoming the limitations of traditional post-event analysis, this system enhances security and operational efficiency[cite: 4, 6].
+### 주요 특징
+* [cite_start]**실시간 탐지 (Real-time Detection):** 지능형 CCTV 시스템을 이용하여 이상 상황을 즉시 감지합니다[cite: 5].
+* [cite_start]**경량화 (Lightweight):** 약 1,000개의 파라미터로 설계되어 엣지 디바이스에서도 실시간 구동이 가능합니다[cite: 9].
+* [cite_start]**공정성 (Fairness):** 외형, 인종, 성별 편향을 배제하고 오직 스켈레톤(뼈대) 동작 인식에만 집중합니다[cite: 9].
 
-### Key Features
-* [cite_start]**Real-time Detection:** Detects abnormal situations instantly using intelligent CCTV systems[cite: 5].
-* [cite_start]**Lightweight:** Designed with approximately 1,000 parameters, enabling real-time operation on edge devices[cite: 9].
-* [cite_start]**Fairness:** Focuses solely on skeleton-based action recognition, excluding biases related to appearance, race, or gender[cite: 9].
+## 🛠 방법론 및 기술 스택 (Methodology & Tech Stack)
 
-## 🛠 Methodology & Tech Stack
+### 처리 과정 (Process)
+1.  [cite_start]**입력 (Input):** CCTV 또는 비디오 영상[cite: 7].
+2.  [cite_start]**포즈 추출 (Pose Extraction):** **YOLOv8-Pose**를 사용하여 사람당 17개의 키포인트(Keypoints)를 실시간으로 추출[cite: 7].
+3.  [cite_start]**전처리 (Preprocessing):** 시계열 행동 패턴 분석을 위해 24 프레임의 슬라이딩 윈도우(Sliding Window) 시퀀스를 구성[cite: 7].
+4.  [cite_start]**이상 탐지 (Anomaly Detection):** **STG-NF (Spatio-Temporal Graph Normalizing Flow)** 모델을 활용하여 정상 행동의 분포를 학습[cite: 7].
+    * [cite_start]**정상 행동:** 분포의 중심(Center)에 매핑됨 (High Likelihood)[cite: 9].
+    * [cite_start]**이상 행동:** 분포의 외곽(Outside)에 위치함 (High Negative Log-Likelihood)[cite: 9].
 
-### Process
-1.  [cite_start]**Input:** CCTV or video footage[cite: 7].
-2.  [cite_start]**Pose Extraction:** Real-time extraction of 17 keypoints per person using **YOLOv8-Pose**[cite: 7].
-3.  [cite_start]**Preprocessing:** Construction of 24-frame sliding window sequences for time-series pattern analysis[cite: 7].
-4.  [cite_start]**Anomaly Detection:** Utilizing **STG-NF (Spatio-Temporal Graph Normalizing Flow)** to learn normal behavior distributions[cite: 7].
-    * [cite_start]**Normal Behavior:** Mapped to the center of the distribution (High Likelihood)[cite: 9].
-    * [cite_start]**Abnormal Behavior:** Mapped to the outside of the distribution (High Negative Log-Likelihood)[cite: 9].
+### 기술 스택 (Tech Stack)
+* [cite_start]**모델 추론:** PyTorch [cite: 7]
+* [cite_start]**영상 처리:** OpenCV [cite: 7]
+* [cite_start]**웹 대시보드:** Streamlit [cite: 7]
 
-### Tech Stack
-* [cite_start]**Model Inference:** PyTorch [cite: 7]
-* [cite_start]**Image Processing:** OpenCV [cite: 7]
-* [cite_start]**Web Dashboard:** Streamlit [cite: 7]
+## 📂 데이터셋 설정 (PoseLift)
 
-## 📂 Dataset Setup (PoseLift)
+[cite_start]본 프로젝트는 **PoseLift** 데이터셋을 사용합니다[cite: 8]. 모델 학습에는 원본 `.pkl` 파일이 아닌, 구조화된 키포인트 데이터가 담긴 **JSON 파일**을 사용합니다.
 
-This project utilizes the **PoseLift** dataset. The model is trained using **JSON files** containing structured keypoint data, not the raw `.pkl` files.
+**[📂 PoseLift 저장소 링크](https://github.com/TeCSAR-UNCC/PoseLift/tree/main)**
 
-**[📂 PoseLift Repository Link](https://github.com/TeCSAR-UNCC/PoseLift/tree/main)**
+### 설정 방법 (Instructions)
+1.  **데이터 다운로드:** 위 링크에서 PoseLift 데이터셋의 **JSON 포맷(`Json_files`)**을 다운로드합니다.
+2.  **데이터 배치:** 다운로드한 JSON 파일들을 `STG-NF` 폴더 안으로 이동시킵니다.
+    * *참고:* JSON 파일은 사람 ID와 프레임 번호로 구조화되어 있어 이상행동 탐지 모델에 적합합니다.
 
-### Instructions
-1.  **Download Data:** Download the **JSON format (`Json_files`)** of the PoseLift dataset from the link above.
-2.  **Place Data:** Move the downloaded JSON files into the `STG-NF` directory.
-    * *Note:* The JSON files are structured by person ID and frame number, making them suitable for anomaly detection models.
+## 🚀 사용법 (Usage)
 
-## 🚀 Usage
-
-### 1. Training
-Install the required dependencies and run the training script. Since the model uses an unsupervised approach, labels are not required.
+### 1. 학습 (Training)
+필요한 의존성 라이브러리를 설치한 후, 아래 명령어로 학습 스크립트를 실행합니다. 비지도 학습(Unsupervised) 방식이므로 별도의 라벨링은 필요하지 않습니다.
 
 ```bash
 python train_eval.py
